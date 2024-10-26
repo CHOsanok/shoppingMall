@@ -30,18 +30,18 @@ authController.loginWithEmaill = async (req, res) => {
 
 authController.authenticate = async (req, res, next) => {
   try {
-    const tokenString = req.hgeaders.authorization;
-
-    if (tokenString) {
-      const token = tokenString.replace("Bearer ", "");
-      jwt.verify(token, JWT_SECRET_KEY, (error, payload) => {
-        if (error) throw new Error("invalid token");
-
-        req.userId = payload._id;
-      });
-      next();
+    const tokenString = req.headers.authorization;
+    if (!tokenString) {
+      throw new Error("Token이 존재 하지 않습니다.");
     }
-    throw new Error("Token이 존재 하지 않습니다.");
+    const token = tokenString.replace("Bearer ", "");
+    jwt.verify(token, JWT_SECRET_KEY, (error, payload) => {
+      if (error) {
+        throw new Error("Invalid token");
+      }
+      req.userId = payload._id;
+    });
+    next();
   } catch (error) {
     res.status(400).json({ status: "fail", error: error.message });
   }
