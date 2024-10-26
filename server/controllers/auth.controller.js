@@ -28,7 +28,7 @@ authController.loginWithEmaill = async (req, res) => {
   }
 };
 
-authController.authController = async (req, res, next) => {
+authController.authenticate = async (req, res, next) => {
   try {
     const tokenString = req.hgeaders.authorization;
 
