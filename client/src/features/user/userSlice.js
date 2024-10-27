@@ -22,7 +22,23 @@ export const loginWithGoogle = createAsyncThunk(
   async (token, { rejectWithValue }) => {}
 );
 
-export const logout = () => (dispatch) => {};
+export const logout = createAsyncThunk(
+  "user/logout",
+  async (navigate, { dispatch }) => {
+    try {
+      sessionStorage.removeItem("token");
+      dispatch(
+        showToastMessage({
+          message: "로그아웃을 성공했습니다.",
+          status: "success",
+        })
+      );
+      navigate("/");
+    } catch (error) {
+      dispatch(showToastMessage({ message: error.error, status: "error" }));
+    }
+  }
+);
 export const registerUser = createAsyncThunk(
   "user/registerUser",
   async (
@@ -102,6 +118,17 @@ const userSlice = createSlice({
       })
       .addCase(loginWithToken.fulfilled, (state, action) => {
         state.user = action.payload.user;
+      })
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.loading = false;
+        state.logout = action.payload;
       });
   },
 });
