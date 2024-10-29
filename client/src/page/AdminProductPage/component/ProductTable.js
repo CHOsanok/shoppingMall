@@ -30,7 +30,7 @@ const ProductTable = ({ header, data, deleteItem, openEditForm }) => {
                   ))}
                 </th>
                 <th>
-                  <img src={item.image} width={100} alt="image" />
+                  <img src={item.image} width={100} alt="ProductImage" />
                 </th>
                 <th>{item.status}</th>
                 <th style={{ minWidth: "100px" }}>
@@ -49,7 +49,9 @@ const ProductTable = ({ header, data, deleteItem, openEditForm }) => {
               </tr>
             ))
           ) : (
-            <tr>No Data to show</tr>
+            <tr>
+              <td colSpan={header.length + 1}>No Data to show</td>
+            </tr>
           )}
         </tbody>
       </Table>
