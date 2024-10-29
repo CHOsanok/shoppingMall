@@ -11,6 +11,7 @@ export const getProductList = createAsyncThunk(
       if (response.status !== 200) {
         throw new Error(response.error);
       }
+
       return response.data.product;
     } catch (error) {
       rejectWithValue(error.error);
@@ -34,6 +35,7 @@ export const createProduct = createAsyncThunk(
       dispatch(
         showToastMessage({ message: "상품 생성 완료", status: "success" })
       );
+
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.error);
