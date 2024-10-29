@@ -30,10 +30,11 @@ const Login = () => {
   const handleGoogleLogin = async (googleData) => {
     //구글 로그인 하기
   };
-
-  if (user) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user]);
   return (
     <>
       <Container className="login-area">
