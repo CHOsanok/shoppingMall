@@ -25,8 +25,14 @@ productController.createProduct = async (req, res) => {
 };
 productController.getProducts = async (req, res) => {
   try {
-    const product = await Product.find({});
-    res.status(200).json({ status: "success", product });
+    const { page, name } = req.query;
+
+    const cond = name ? { name: { $regex: name, $options: "i" } } : {};
+
+    let query = Product.find(cond);
+
+    const productList = await query.exec();
+    res.status(200).json({ status: "success", productList });
   } catch (error) {
     res.status(400).json({ status: "fail", error: error.message });
   }
