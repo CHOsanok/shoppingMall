@@ -31,9 +31,8 @@ authController.loginWithEmaill = async (req, res) => {
 authController.authenticate = async (req, res, next) => {
   try {
     const tokenString = req.headers.authorization;
-    if (!tokenString) {
-      throw new Error("Token이 존재 하지 않습니다.");
-    }
+    if (tokenString === "Bearer null") return;
+
     const token = tokenString.replace("Bearer ", "");
     jwt.verify(token, JWT_SECRET_KEY, (error, payload) => {
       if (error) {
