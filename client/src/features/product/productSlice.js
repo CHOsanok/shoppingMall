@@ -12,7 +12,7 @@ export const getProductList = createAsyncThunk(
         throw new Error(response.error);
       }
 
-      return response.data.productList;
+      return response.data;
     } catch (error) {
       rejectWithValue(error.error);
     }
@@ -29,6 +29,7 @@ export const createProduct = createAsyncThunk(
   async (formData, { dispatch, rejectWithValue }) => {
     try {
       const response = await api.post("/product", formData);
+
       if (response.status !== 200) {
         throw new Error(response.error);
       }
@@ -50,6 +51,27 @@ export const deleteProduct = createAsyncThunk(
 export const editProduct = createAsyncThunk(
   "products/editProduct",
   async ({ id, ...formData }, { dispatch, rejectWithValue }) => {}
+);
+
+export const checkImageUrl = createAsyncThunk(
+  "products/checkImageUrl",
+  async (url, { rejectWithValue }) => {
+    try {
+      if (!url) {
+        throw new Error("이미지를 넣어 주세요");
+      }
+      const response = await fetch(url, { method: "HEAD" });
+      const imageType = response.headers.get("content-type");
+
+      if (response.ok && imageType?.startsWith("image/")) {
+        return true;
+      } else {
+        throw new Error("잘못된 이미지 URL");
+      }
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
 );
 
 // 슬라이스 생성
@@ -95,11 +117,26 @@ const productSlice = createSlice({
       })
       .addCase(getProductList.fulfilled, (state, action) => {
         state.loading = false;
-        state.productList = action.payload;
+        state.productList = action.payload.product;
+        state.totalPageNum = action.payload.totalPageNum;
         state.error = "";
       })
       .addCase(getProductList.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(checkImageUrl.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(checkImageUrl.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = "";
+        state.checkImage = action.payload;
+        state.success = true;
+      })
+      .addCase(checkImageUrl.rejected, (state, action) => {
+        state.loading = false;
+        state.success = false;
         state.error = action.payload;
       });
   },

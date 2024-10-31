@@ -5,6 +5,7 @@ import CloudinaryUploadWidget from "../../../utils/CloudinaryUploadWidget";
 import { CATEGORY, STATUS, SIZE } from "../../../constants/product.constants";
 import "../style/adminProduct.style.css";
 import {
+  checkImageUrl,
   clearError,
   createProduct,
   editProduct,
@@ -21,7 +22,7 @@ const InitialFormData = {
   price: 0,
 };
 
-const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
+const NewItemDialog = ({ mode, showDialog, setShowDialog, setAddProduct }) => {
   const { error, success, selectedProduct } = useSelector(
     (state) => state.product
   );
@@ -33,10 +34,6 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const [stock, setStock] = useState([]);
   const dispatch = useDispatch();
   const [stockError, setStockError] = useState(false);
-
-  useEffect(() => {
-    if (success) setShowDialog(false);
-  }, [success]);
 
   useEffect(() => {
     if (error || !success) {
@@ -61,24 +58,34 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const handleClose = () => {
     //모든걸 초기화시키고;
     // 다이얼로그 닫아주기
+    setShowDialog(false);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
+    // 새 상품 만들기
     event.preventDefault();
-    //재고를 입력했는지 확인, 아니면 에러
-    // 재고를 배열에서 객체로 바꿔주기
-    // [['M',2]] 에서 {M:2}로
 
     if (stock.length === 0) {
-      setStockError(true);
+      return setStockError(true);
     }
+
     const totalStock = stock.reduce((total, item) => {
       return { ...total, [item[0]]: parseInt(item[1]) };
     }, {});
 
     if (mode === "new") {
-      //새 상품 만들기
-      dispatch(createProduct({ ...formData, stock: totalStock }));
+      try {
+        await dispatch(checkImageUrl(formData.image)).unwrap();
+
+        await dispatch(
+          createProduct({ ...formData, stock: totalStock })
+        ).unwrap();
+
+        setShowDialog(false);
+        setAddProduct(false);
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       // 상품 수정하기
     }
@@ -92,6 +99,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
   const addStock = () => {
     //재고타입 추가시 배열에 새 배열 추가
+    setStockError(false);
     setStock([...stock, []]);
   };
 
