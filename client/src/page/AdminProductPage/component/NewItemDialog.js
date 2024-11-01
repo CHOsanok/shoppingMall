@@ -9,7 +9,9 @@ import {
   clearError,
   createProduct,
   editProduct,
+  getProductList,
 } from "../../../features/product/productSlice";
+import { useLocation } from "react-router";
 
 const InitialFormData = {
   name: "",
@@ -22,7 +24,7 @@ const InitialFormData = {
   price: 0,
 };
 
-const NewItemDialog = ({ mode, showDialog, setShowDialog, setAddProduct }) => {
+const NewItemDialog = ({ mode, showDialog, setShowDialog, setSearchQuery }) => {
   const { error, success, selectedProduct } = useSelector(
     (state) => state.product
   );
@@ -34,6 +36,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, setAddProduct }) => {
   const [stock, setStock] = useState([]);
   const dispatch = useDispatch();
   const [stockError, setStockError] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     if (error || !success) {
@@ -62,7 +65,6 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, setAddProduct }) => {
   };
 
   const handleSubmit = async (event) => {
-    // 새 상품 만들기
     event.preventDefault();
 
     if (stock.length === 0) {
@@ -74,20 +76,31 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, setAddProduct }) => {
     }, {});
 
     if (mode === "new") {
+      // 새 상품 만들기
       try {
         await dispatch(checkImageUrl(formData.image)).unwrap();
-
         await dispatch(
           createProduct({ ...formData, stock: totalStock })
         ).unwrap();
-
+        setSearchQuery({ page: 1 });
         setShowDialog(false);
-        setAddProduct(false);
       } catch (error) {
         console.log(error);
       }
     } else {
       // 상품 수정하기
+      const queryParams = new URLSearchParams(location.search);
+      const queryObject = Object.fromEntries(queryParams.entries());
+
+      dispatch(
+        editProduct({
+          id: selectedProduct._id,
+          ...formData,
+          stock: totalStock,
+          queryObject,
+        })
+      );
+      setShowDialog(false);
     }
   };
 
