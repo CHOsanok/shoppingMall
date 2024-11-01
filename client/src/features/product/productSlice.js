@@ -48,17 +48,34 @@ export const createProduct = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
   "products/deleteProduct",
-  async (id, { dispatch, rejectWithValue }) => {}
+  async ({ id, searchQuery }, { dispatch, rejectWithValue }) => {
+    try {
+      await api.delete(`/product/${id}`);
+
+      dispatch(getProductList(searchQuery));
+      dispatch(
+        showToastMessage({
+          message: "상품이 삭제되었습니다.",
+          status: "success",
+        })
+      );
+
+      return true;
+    } catch (error) {
+      return rejectWithValue(error.error);
+    }
+  }
 );
 export const editProduct = createAsyncThunk(
   "products/editProduct",
-  async ({ id, queryObject, ...formData }, { dispatch, rejectWithValue }) => {
+  async ({ id, searchQuery, ...formData }, { dispatch, rejectWithValue }) => {
     try {
       const response = await api.put(`/product/${id}`, formData);
       if (response.status !== 200) {
         throw new Error(response.error);
       }
-      dispatch(getProductList(queryObject));
+
+      dispatch(getProductList(searchQuery));
       dispatch(
         showToastMessage({
           message: "상품이 수정되었습니다.",
@@ -68,8 +85,6 @@ export const editProduct = createAsyncThunk(
 
       return response.data.product;
     } catch (error) {
-      console.log(error);
-
       return rejectWithValue(error.error);
     }
   }

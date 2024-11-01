@@ -9,9 +9,7 @@ import {
   clearError,
   createProduct,
   editProduct,
-  getProductList,
 } from "../../../features/product/productSlice";
-import { useLocation } from "react-router";
 
 const InitialFormData = {
   name: "",
@@ -24,7 +22,13 @@ const InitialFormData = {
   price: 0,
 };
 
-const NewItemDialog = ({ mode, showDialog, setShowDialog, setSearchQuery }) => {
+const NewItemDialog = ({
+  mode,
+  showDialog,
+  setShowDialog,
+  setSearchQuery,
+  searchQuery,
+}) => {
   const { error, success, selectedProduct } = useSelector(
     (state) => state.product
   );
@@ -36,7 +40,6 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, setSearchQuery }) => {
   const [stock, setStock] = useState([]);
   const dispatch = useDispatch();
   const [stockError, setStockError] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
     if (error || !success) {
@@ -89,15 +92,12 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, setSearchQuery }) => {
       }
     } else {
       // 상품 수정하기
-      const queryParams = new URLSearchParams(location.search);
-      const queryObject = Object.fromEntries(queryParams.entries());
-
       dispatch(
         editProduct({
           id: selectedProduct._id,
           ...formData,
           stock: totalStock,
-          queryObject,
+          searchQuery,
         })
       );
       setShowDialog(false);

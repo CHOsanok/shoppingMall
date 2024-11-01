@@ -54,6 +54,7 @@ const AdminProductPage = () => {
 
   const deleteItem = (id) => {
     //아이템 삭제하가ㅣ
+    dispatch(deleteProduct({ id, searchQuery }));
   };
 
   const openEditForm = (product) => {
@@ -125,6 +126,7 @@ const AdminProductPage = () => {
         showDialog={showDialog}
         setShowDialog={setShowDialog}
         setSearchQuery={setSearchQuery}
+        searchQuery={searchQuery}
       />
     </div>
   );
