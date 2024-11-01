@@ -33,6 +33,7 @@ productController.createProduct = async (req, res) => {
     res.status(400).json({ status: "fail", error: error.message });
   }
 };
+
 productController.getProducts = async (req, res) => {
   try {
     const { page, name } = req.query;
@@ -55,6 +56,7 @@ productController.getProducts = async (req, res) => {
     res.status(400).json({ status: "fail", error: error.message });
   }
 };
+
 productController.updateProduct = async (req, res) => {
   try {
     const productId = req.params.id;
@@ -93,4 +95,14 @@ productController.updateProduct = async (req, res) => {
   }
 };
 
+productController.deleteProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const deleteProduct = await Product.deleteOne({ _id: productId });
+
+    res.status(200).json({ status: "success", deleteProduct });
+  } catch (error) {
+    res.status(400).json({ status: "fail", error: error.message });
+  }
+};
 module.exports = productController;
