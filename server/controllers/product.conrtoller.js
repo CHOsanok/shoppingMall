@@ -37,6 +37,7 @@ productController.createProduct = async (req, res) => {
 productController.getProducts = async (req, res) => {
   try {
     const { page, name } = req.query;
+
     const cond = name ? { name: { $regex: name, $options: "i" } } : {};
     const response = { status: "success" };
     let query = Product.find(cond).sort({ createdAt: -1 });
@@ -52,6 +53,21 @@ productController.getProducts = async (req, res) => {
     const productList = await query.exec();
     response.product = productList;
     res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({ status: "fail", error: error.message });
+  }
+};
+
+productController.getProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      throw new Error("item doesn't exist");
+    }
+
+    res.status(200).json({ status: "success", product });
   } catch (error) {
     res.status(400).json({ status: "fail", error: error.message });
   }
