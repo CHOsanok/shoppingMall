@@ -28,6 +28,7 @@ const ProductDetail = () => {
     if (!user) {
       navigate("/login");
     }
+
     dispatch(addToCart({ id, size }));
   };
   const selectSize = (value) => {

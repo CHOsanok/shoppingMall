@@ -14,10 +14,11 @@ const initialState = {
 // Async thunk actions
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async ({ id, size, qty }, { rejectWithValue, dispatch }) => {
+  async ({ id, size }, { rejectWithValue, dispatch }) => {
     try {
-      const response = await api.post("/cart", { product: id, size, qty });
-      if (response.status === 200) {
+      const response = await api.post("/cart", { productId: id, size, qty: 1 });
+
+      if (response.status !== 200) {
         throw new Error(response.error);
       }
 
@@ -32,7 +33,7 @@ export const addToCart = createAsyncThunk(
     } catch (error) {
       dispatch(
         showToastMessage({
-          message: "카트에 아이템 추가 실패했습니다.",
+          message: error.error,
           status: "error",
         })
       );
@@ -77,6 +78,7 @@ const cartSlice = createSlice({
       })
       .addCase(addToCart.fulfilled, (state, action) => {
         state.loading = false;
+        state.cartItemCount = action.payload.cartIemQty;
         state.error = "";
       })
       .addCase(addToCart.rejected, (state, action) => {
