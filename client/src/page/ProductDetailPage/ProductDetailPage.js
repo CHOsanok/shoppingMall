@@ -6,7 +6,7 @@ import { ColorRing } from "react-loader-spinner";
 import { currencyFormat } from "../../utils/number";
 import "./style/productDetail.style.css";
 import { getProductDetail } from "../../features/product/productSlice";
-import { addToCart } from "../../features/cart/cartSlice";
+import { addToCart, getCartList } from "../../features/cart/cartSlice";
 
 const ProductDetail = () => {
   const dispatch = useDispatch();
@@ -18,21 +18,15 @@ const ProductDetail = () => {
   const navigate = useNavigate();
 
   const addItemToCart = () => {
-    //사이즈를 아직 선택안했다면 에러
-    // 아직 로그인을 안한유저라면 로그인페이지로
-    // 카트에 아이템 추가하기
     if (size === "") {
       return setSizeError(true);
     }
-
     if (!user) {
       navigate("/login");
     }
-
     dispatch(addToCart({ id, size }));
   };
   const selectSize = (value) => {
-    // 사이즈 추가하기
     if (sizeError) {
       setSizeError(false);
     }
@@ -69,7 +63,7 @@ const ProductDetail = () => {
         <Col className="product-info-area" sm={6}>
           <div className="product-info">{selectedProduct.name}</div>
           <div className="product-info">
-            ₩ {currencyFormat(selectedProduct.price)}
+            ₩ {selectedProduct.price.toLocaleString()}
           </div>
           <div className="product-info">{selectedProduct.description}</div>
 
@@ -93,11 +87,11 @@ const ProductDetail = () => {
                 Object.keys(selectedProduct.stock).map((item, index) =>
                   selectedProduct.stock[item] > 0 ? (
                     <Dropdown.Item eventKey={item} key={index}>
-                      {item.toUpperCase()}
+                      {`${item.toUpperCase()} : ${item.length}`}
                     </Dropdown.Item>
                   ) : (
                     <Dropdown.Item eventKey={item} disabled={true} key={index}>
-                      {item.toUpperCase()}
+                      {`${item.toUpperCase()} : 상품 재고가 없습니다.`}
                     </Dropdown.Item>
                   )
                 )}
