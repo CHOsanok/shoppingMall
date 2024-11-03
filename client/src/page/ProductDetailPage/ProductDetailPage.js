@@ -3,14 +3,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Container, Row, Col, Button, Dropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { ColorRing } from "react-loader-spinner";
-import { currencyFormat } from "../../utils/number";
 import "./style/productDetail.style.css";
 import { getProductDetail } from "../../features/product/productSlice";
-import { addToCart, getCartList } from "../../features/cart/cartSlice";
+import { addToCart } from "../../features/cart/cartSlice";
 
 const ProductDetail = () => {
   const dispatch = useDispatch();
   const { selectedProduct, loading } = useSelector((state) => state.product);
+  const cartLoading = useSelector((state) => state.cart.loading);
   const [size, setSize] = useState("");
   const { id } = useParams();
   const [sizeError, setSizeError] = useState(false);
@@ -30,7 +30,6 @@ const ProductDetail = () => {
     if (sizeError) {
       setSizeError(false);
     }
-
     setSize(value);
   };
 
@@ -87,7 +86,9 @@ const ProductDetail = () => {
                 Object.keys(selectedProduct.stock).map((item, index) =>
                   selectedProduct.stock[item] > 0 ? (
                     <Dropdown.Item eventKey={item} key={index}>
-                      {`${item.toUpperCase()} : ${item.length}`}
+                      {`${item.toUpperCase()} : 재고수량 ${
+                        selectedProduct.stock[item]
+                      }`}
                     </Dropdown.Item>
                   ) : (
                     <Dropdown.Item eventKey={item} disabled={true} key={index}>
@@ -100,8 +101,13 @@ const ProductDetail = () => {
           <div className="warning-message">
             {sizeError && "사이즈를 선택해주세요."}
           </div>
-          <Button variant="dark" className="add-button" onClick={addItemToCart}>
-            추가
+          <Button
+            disabled={cartLoading}
+            variant="dark"
+            className={cartLoading ? "add-button disabled" : "add-button"}
+            onClick={addItemToCart}
+          >
+            {cartLoading ? "추가중..." : "추가"}
           </Button>
         </Col>
       </Row>

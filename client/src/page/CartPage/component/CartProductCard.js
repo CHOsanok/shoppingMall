@@ -1,18 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Row, Col, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useDispatch } from "react-redux";
-import { currencyFormat } from "../../../utils/number";
+import { useDispatch, useSelector } from "react-redux";
 import { updateQty, deleteCartItem } from "../../../features/cart/cartSlice";
+import { showToastMessage } from "../../../features/common/uiSlice";
 
 const CartProductCard = ({ item }) => {
   const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.cart);
+  const [qty, setQty] = useState(item.qty);
 
-  const handleQtyChange = (id, value) => {
-    console.log(id, value);
-
-    dispatch(updateQty({ id, value }));
+  useEffect(() => {
+    setQty(item.qty);
+  }, [item]);
+  const handleQtyChange = (id, value, maxQty) => {
+    if (maxQty === value * 1) {
+      dispatch(
+        showToastMessage({
+          message: "최대 상품 주문 횟수 입니다.",
+          status: "success",
+        })
+      );
+    } else {
+      dispatch(updateQty({ id, value }));
+    }
   };
 
   const deleteCart = (id) => {
@@ -30,6 +42,7 @@ const CartProductCard = ({ item }) => {
             <h3>{item.productId.name}</h3>
             <button className="trash-button">
               <FontAwesomeIcon
+                disabled={loading}
                 icon={faTrash}
                 width={24}
                 onClick={() => deleteCart(item._id)}
@@ -38,31 +51,31 @@ const CartProductCard = ({ item }) => {
           </div>
 
           <div>
-            <strong>₩ {currencyFormat(item.productId.price)}</strong>
+            <strong>₩ {item.productId.price.toLocaleString()}</strong>
           </div>
           <div>Size: {item.size}</div>
-          <div>Total: ₩ {currencyFormat(item.productId.price * item.qty)}</div>
+          <div>
+            Total: ₩ {(item.productId.price * item.qty).toLocaleString()}
+          </div>
           <div>
             Quantity:
-            <Form.Select
+            <Form.Control
+              className="qty-dropdown"
+              disabled={loading}
+              defaultValue={item.qty}
+              value={qty}
               onChange={(event) =>
-                handleQtyChange(item._id, event.target.value)
+                handleQtyChange(
+                  item._id,
+                  event.target.value,
+                  item.productId.stock[item.size]
+                )
               }
               required
-              defaultValue={item.qty}
-              className="qty-dropdown"
-            >
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              <option value={3}>3</option>
-              <option value={4}>4</option>
-              <option value={5}>5</option>
-              <option value={6}>6</option>
-              <option value={7}>7</option>
-              <option value={8}>8</option>
-              <option value={9}>9</option>
-              <option value={10}>10</option>
-            </Form.Select>
+              type="number"
+              placeholder="0"
+              max={item.productId.stock[item.size]}
+            />
           </div>
         </Col>
       </Row>

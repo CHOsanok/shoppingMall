@@ -21,6 +21,7 @@ export const addToCart = createAsyncThunk(
       if (response.status !== 200) {
         throw new Error(response.error);
       }
+      dispatch(getCartQty());
       dispatch(
         showToastMessage({
           message: "카트에 아이템이 추가 됐습니다.",
@@ -46,6 +47,7 @@ export const getCartList = createAsyncThunk(
   async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await api.get("/cart");
+
       if (response.status !== 200) {
         throw new Error(response.error);
       }
@@ -62,6 +64,7 @@ export const deleteCartItem = createAsyncThunk(
     try {
       const response = await api.delete(`/cart/${id}`);
       dispatch(getCartList());
+      dispatch(getCartQty());
       dispatch(
         showToastMessage({
           message: "카트에 아이템이 삭제되었습니다.",
@@ -84,9 +87,18 @@ export const deleteCartItem = createAsyncThunk(
 
 export const updateQty = createAsyncThunk(
   "cart/updateQty",
-  async ({ id, value }, { rejectWithValue }) => {
+  async ({ id, value }, { rejectWithValue, dispatch }) => {
     try {
-      await api.put(`/cart/${id}`, { value });
+      const response = await api.put(`/cart/${id}`, { value });
+      dispatch(getCartList());
+      dispatch(
+        showToastMessage({
+          message: "상품의 주문내역이 변경되었습니다.",
+          status: "success",
+        })
+      );
+
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.error);
     }
@@ -95,7 +107,20 @@ export const updateQty = createAsyncThunk(
 
 export const getCartQty = createAsyncThunk(
   "cart/getCartQty",
-  async (_, { rejectWithValue, dispatch }) => {}
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.get("/cart/qty");
+
+      if (response.status !== 200) {
+        throw new Error(response.error);
+      }
+      console.log(response.data);
+
+      return response.data.cartItemQty;
+    } catch (error) {
+      return rejectWithValue(error.error);
+    }
+  }
 );
 
 const cartSlice = createSlice({
@@ -128,7 +153,7 @@ const cartSlice = createSlice({
         state.loading = false;
         state.error = "";
         state.cartList = action.payload.product.items;
-        state.cartItemCount = action.payload.cartItemQty;
+        state.cartItemCount = action.payload.product.items.length;
         state.totalPrice = action.payload.product.items.reduce(
           (total, item) => total + item.productId.price * item.qty,
           0
@@ -147,6 +172,29 @@ const cartSlice = createSlice({
         state.cartItemCount = action.payload.cartItemCount;
       })
       .addCase(deleteCartItem.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateQty.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(updateQty.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = "";
+      })
+      .addCase(updateQty.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getCartQty.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getCartQty.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = "";
+        state.cartItemQty = action.payload;
+      })
+      .addCase(getCartQty.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

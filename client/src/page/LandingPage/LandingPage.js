@@ -21,40 +21,41 @@ const LandingPage = () => {
     );
   }, [query]);
 
-  if (loading) {
-    return (
-      <ColorRing
-        visible={true}
-        height="80"
-        width="80"
-        ariaLabel="blocks-loading"
-        wrapperStyle={{}}
-        wrapperClass="blocks-wrapper"
-        colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
-      />
-    );
-  }
-
   return (
-    <Container>
-      <Row>
-        {productList?.length > 0 ? (
-          productList.map((item) => (
-            <Col md={3} sm={12} key={item._id}>
-              <ProductCard item={item} />
-            </Col>
-          ))
-        ) : (
-          <div className="text-align-center empty-bag">
-            {name === "" ? (
-              <h2>등록된 상품이 없습니다!</h2>
+    <>
+      {" "}
+      {loading ? (
+        <ColorRing
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="blocks-loading"
+          wrapperStyle={{}}
+          wrapperClass="blocks-wrapper"
+          colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+        />
+      ) : (
+        <Container>
+          <Row>
+            {productList?.length > 0 ? (
+              productList.map((item) => (
+                <Col md={3} sm={12} key={item._id}>
+                  <ProductCard item={item} />
+                </Col>
+              ))
             ) : (
-              <h2>{name}과 일치한 상품이 없습니다!`</h2>
+              <div className="text-align-center empty-bag">
+                {name === "" ? (
+                  <h2>등록된 상품이 없습니다!</h2>
+                ) : (
+                  <h2>{name}과 일치한 상품이 없습니다!`</h2>
+                )}
+              </div>
             )}
-          </div>
-        )}
-      </Row>
-    </Container>
+          </Row>
+        </Container>
+      )}
+    </>
   );
 };
 
