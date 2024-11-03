@@ -84,7 +84,13 @@ export const deleteCartItem = createAsyncThunk(
 
 export const updateQty = createAsyncThunk(
   "cart/updateQty",
-  async ({ id, value }, { rejectWithValue }) => {}
+  async ({ id, value }, { rejectWithValue }) => {
+    try {
+      await api.put(`/cart/${id}`, { value });
+    } catch (error) {
+      return rejectWithValue(error.error);
+    }
+  }
 );
 
 export const getCartQty = createAsyncThunk(

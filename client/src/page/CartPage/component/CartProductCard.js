@@ -10,6 +10,8 @@ const CartProductCard = ({ item }) => {
   const dispatch = useDispatch();
 
   const handleQtyChange = (id, value) => {
+    console.log(id, value);
+
     dispatch(updateQty({ id, value }));
   };
 

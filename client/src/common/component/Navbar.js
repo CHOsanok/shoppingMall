@@ -41,9 +41,6 @@ const Navbar = ({ user }) => {
   const handleLogout = () => {
     dispatch(logout(navigate));
   };
-  useEffect(() => {
-    dispatch(getCartList());
-  }, [cartItemCount]);
 
   return (
     <div>
