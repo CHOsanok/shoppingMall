@@ -11,11 +11,10 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/user/userSlice";
-import { getCartQty } from "../../features/cart/cartSlice";
 
 const Navbar = ({ user }) => {
   const dispatch = useDispatch();
-  const { cartItemQty } = useSelector((state) => state.cart);
+  const { cartItemQty, loading } = useSelector((state) => state.cart);
   const isMobile = window.navigator.userAgent.indexOf("Mobile") !== -1;
   const [showSearchBox, setShowSearchBox] = useState(false);
   const menuList = [
@@ -28,6 +27,7 @@ const Navbar = ({ user }) => {
     "Sale",
     "지속가능성",
   ];
+
   let [width, setWidth] = useState(0);
   let navigate = useNavigate();
   const onCheckEnter = (event) => {
@@ -41,10 +41,6 @@ const Navbar = ({ user }) => {
   const handleLogout = () => {
     dispatch(logout(navigate));
   };
-
-  useEffect(() => {
-    dispatch(getCartQty());
-  }, [cartItemQty]);
 
   return (
     <div>
@@ -108,7 +104,7 @@ const Navbar = ({ user }) => {
               <FontAwesomeIcon icon={faShoppingBag} />
               {!isMobile && (
                 <span style={{ cursor: "pointer" }}>{`쇼핑백(${
-                  cartItemQty || 0
+                  loading ? "검색중" : cartItemQty || 0
                 })`}</span>
               )}
             </div>
