@@ -1,3 +1,4 @@
+const { populate } = require("dotenv");
 const Cart = require("../model/Cart");
 
 const cartController = {};
@@ -53,6 +54,7 @@ cartController.getCart = async (req, res) => {
     res.status(400).json({ status: "fail", error: error.message });
   }
 };
+
 cartController.deleteCartItem = async (req, res) => {
   try {
     const { userId } = req;
@@ -64,6 +66,29 @@ cartController.deleteCartItem = async (req, res) => {
     await cart.save();
 
     res.status(200).json({ status: "success", cartItemQty: cart.items.length });
+  } catch (error) {
+    res.status(400).json({ status: "fail", error: error.message });
+  }
+};
+
+cartController.updateQty = async (req, res) => {
+  try {
+    const { userId } = req;
+    const { value } = req.body;
+    const productId = req.params.id;
+    const cart = await Cart.findOne({ userId }).populate({
+      path: "items",
+      populate: { path: "productId", model: "Product" },
+    });
+    if (!cart) {
+      throw new Error("카트가 존재하지 않습니다.");
+    }
+    const index = cart.items.findIndex((item) => item._id.equals(productId));
+    cart.items[index].qty = value;
+    if (index === -1) throw new Error("아이템이 존재하지 않습니다.");
+
+    await cart.save();
+    res.status(200).json({ status: "success", data: cart.items });
   } catch (error) {
     res.status(400).json({ status: "fail", error: error.message });
   }
