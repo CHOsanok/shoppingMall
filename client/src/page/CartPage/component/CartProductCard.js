@@ -14,17 +14,23 @@ const CartProductCard = ({ item }) => {
   useEffect(() => {
     setQty(item.qty);
   }, [item]);
-  const handleQtyChange = (id, value, maxQty) => {
-    if (maxQty === value * 1) {
+  const handleQtyChange = (value, maxQty) => {
+    console.log(item.productId.name);
+
+    if (value * 1 > maxQty) {
       dispatch(
         showToastMessage({
-          message: "최대 상품 주문 횟수 입니다.",
+          message: `${item.productId.name}상품이 최대 수량을 초과했습니다.`,
           status: "success",
         })
       );
     } else {
-      dispatch(updateQty({ id, value }));
+      setQty(value);
     }
+  };
+
+  const handleQtyUpdate = (id) => {
+    dispatch(updateQty({ id, value: qty }));
   };
 
   const deleteCart = (id) => {
@@ -59,14 +65,12 @@ const CartProductCard = ({ item }) => {
           </div>
           <div>
             Quantity:
-            <Form.Control
+            <input
               className="qty-dropdown"
               disabled={loading}
-              defaultValue={item.qty}
               value={qty}
               onChange={(event) =>
                 handleQtyChange(
-                  item._id,
                   event.target.value,
                   item.productId.stock[item.size]
                 )
@@ -76,6 +80,13 @@ const CartProductCard = ({ item }) => {
               placeholder="0"
               max={item.productId.stock[item.size]}
             />
+            <button
+              onClick={() => {
+                handleQtyUpdate(item._id);
+              }}
+            >
+              snffj
+            </button>
           </div>
         </Col>
       </Row>

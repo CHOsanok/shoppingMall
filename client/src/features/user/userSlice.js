@@ -27,6 +27,7 @@ export const logout = createAsyncThunk(
   async (navigate, { dispatch }) => {
     try {
       sessionStorage.removeItem("token");
+      dispatch(initialCart());
       dispatch(
         showToastMessage({
           message: "로그아웃을 성공했습니다.",

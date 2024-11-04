@@ -51,7 +51,7 @@ export const getCartList = createAsyncThunk(
       if (response.status !== 200) {
         throw new Error(response.error);
       }
-      return response.data;
+      return response.data.product;
     } catch (error) {
       return rejectWithValue(error.error);
     }
@@ -89,6 +89,8 @@ export const updateQty = createAsyncThunk(
   "cart/updateQty",
   async ({ id, value }, { rejectWithValue, dispatch }) => {
     try {
+      console.log(id, value, "dsfsdfdsfs");
+
       const response = await api.put(`/cart/${id}`, { value });
       dispatch(getCartList());
       dispatch(
@@ -114,9 +116,8 @@ export const getCartQty = createAsyncThunk(
       if (response.status !== 200) {
         throw new Error(response.error);
       }
-      console.log(response.data);
 
-      return response.data.cartItemQty;
+      return response.data.cartItemCount;
     } catch (error) {
       return rejectWithValue(error.error);
     }
@@ -139,7 +140,7 @@ const cartSlice = createSlice({
       })
       .addCase(addToCart.fulfilled, (state, action) => {
         state.loading = false;
-        state.cartItemCount = action.payload.cartItemQty;
+        state.cartItemCount = action.payload.cartItemCount;
         state.error = "";
       })
       .addCase(addToCart.rejected, (state, action) => {
@@ -152,9 +153,9 @@ const cartSlice = createSlice({
       .addCase(getCartList.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
-        state.cartList = action.payload.product.items;
-        state.cartItemCount = action.payload.product.items.length;
-        state.totalPrice = action.payload.product.items.reduce(
+        state.cartList = action.payload.items;
+        state.cartItemCount = action.payload.items.length;
+        state.totalPrice = action.payload.items.reduce(
           (total, item) => total + item.productId.price * item.qty,
           0
         );
@@ -192,7 +193,7 @@ const cartSlice = createSlice({
       .addCase(getCartQty.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
-        state.cartItemQty = action.payload;
+        state.cartItemCount = action.payload;
       })
       .addCase(getCartQty.rejected, (state, action) => {
         state.loading = false;

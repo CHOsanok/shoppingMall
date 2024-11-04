@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -14,7 +14,7 @@ import { logout } from "../../features/user/userSlice";
 
 const Navbar = ({ user }) => {
   const dispatch = useDispatch();
-  const { cartItemQty, loading } = useSelector((state) => state.cart);
+  const { cartItemCount, loading } = useSelector((state) => state.cart);
   const isMobile = window.navigator.userAgent.indexOf("Mobile") !== -1;
   const [showSearchBox, setShowSearchBox] = useState(false);
   const menuList = [
@@ -104,7 +104,7 @@ const Navbar = ({ user }) => {
               <FontAwesomeIcon icon={faShoppingBag} />
               {!isMobile && (
                 <span style={{ cursor: "pointer" }}>{`쇼핑백(${
-                  loading ? "검색중" : cartItemQty || 0
+                  loading ? "검색중" : cartItemCount || 0
                 })`}</span>
               )}
             </div>
