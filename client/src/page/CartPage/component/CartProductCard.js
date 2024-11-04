@@ -85,7 +85,7 @@ const CartProductCard = ({ item }) => {
                 handleQtyUpdate(item._id);
               }}
             >
-              snffj
+              완료
             </button>
           </div>
         </Col>
