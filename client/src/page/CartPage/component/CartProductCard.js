@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Row, Col, Form } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
 import { updateQty, deleteCartItem } from "../../../features/cart/cartSlice";
@@ -15,9 +15,7 @@ const CartProductCard = ({ item }) => {
     setQty(item.qty);
   }, [item]);
   const handleQtyChange = (value, maxQty) => {
-    console.log(item.productId.name);
-
-    if (value * 1 > maxQty) {
+    if (value * 1 === maxQty + 1 || value * 1 > maxQty) {
       dispatch(
         showToastMessage({
           message: `${item.productId.name}상품이 최대 수량을 초과했습니다.`,
@@ -78,7 +76,7 @@ const CartProductCard = ({ item }) => {
               required
               type="number"
               placeholder="0"
-              max={item.productId.stock[item.size]}
+              max={item.productId.stock[item.size] + 1}
             />
             <button
               onClick={() => {
