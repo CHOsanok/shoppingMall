@@ -1,7 +1,7 @@
 const orderController = {};
 const Order = require("../model/Order");
+const randomStringGenerator = require("../utils/randomStringGenerator");
 const productController = require("./product.conrtoller");
-const { randomStringGenerator } = require("../utils/randomStringGenerator");
 
 orderController.createOrder = async (req, res) => {
   try {
@@ -11,6 +11,7 @@ orderController.createOrder = async (req, res) => {
     const insufficientStockItems = await productController.checkItemListStock(
       orderList
     );
+
     if (insufficientStockItems.length > 0) {
       const errorMessage = insufficientStockItems.reduce(
         (total, item) => (total += item.message),
@@ -25,12 +26,11 @@ orderController.createOrder = async (req, res) => {
       shipTo,
       contact,
       items: orderList,
+      orderNum: randomStringGenerator(),
     });
 
     await newOrder.save();
-    res
-      .status(200)
-      .json({ status: "success", orderNum: randomStringGenerator() });
+    res.status(200).json({ status: "success", orderNum: newOrder.orderNum });
   } catch (error) {
     res.status(400).json({ status: "fail", error: error.message });
   }

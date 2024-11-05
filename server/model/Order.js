@@ -11,12 +11,14 @@ const orderSchema = Schema(
     userId: { type: mongoose.ObjectId, ref: User, required: true },
     status: { type: String, default: "preparing" },
     orderNum: { type: String },
-    items: {
-      productId: { type: mongoose.ObjectId, ref: Product, required: true },
-      price: { type: Number, required: true },
-      qty: { type: Number, required: true, default: 1 },
-      size: { type: String, required: true },
-    },
+    items: [
+      {
+        productId: { type: mongoose.ObjectId, ref: Product, required: true },
+        price: { type: Number, required: true },
+        qty: { type: Number, required: true, default: 1 },
+        size: { type: String, required: true },
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -30,7 +32,7 @@ orderSchema.methods.toJSON = function () {
 orderSchema.post("save", async function () {
   const cart = await Cart.findOne({ userId: this.userId });
   cart.items = [];
-  await cart.save;
+  await cart.save();
 });
 
 const Order = mongoose.model("Order", orderSchema);

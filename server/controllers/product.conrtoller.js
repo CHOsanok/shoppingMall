@@ -122,8 +122,9 @@ productController.deleteProduct = async (req, res) => {
   }
 };
 
-productController.checkItemListStock = async (item) => {
+productController.checkStock = async (item) => {
   const product = await Product.findById(item.productId);
+
   if (product.stock[item.size] < item.qty) {
     return {
       isVerify: false,
@@ -132,6 +133,7 @@ productController.checkItemListStock = async (item) => {
   }
 
   const newStock = { ...product.stock };
+
   newStock[item.size] -= item.qty;
   product.stock = newStock;
 
@@ -144,7 +146,7 @@ productController.checkItemListStock = async (itemList) => {
   const insufficientStockItems = [];
   await Promise.all(
     itemList.map(async (item) => {
-      const stockCheck = await productController.checkItemListStock(item);
+      const stockCheck = await productController.checkStock(item);
       if (!stockCheck.isVerify) {
         insufficientStockItems.push({ item, message: stockCheck.message });
       }
@@ -152,6 +154,7 @@ productController.checkItemListStock = async (itemList) => {
       return stockCheck;
     })
   );
+
   return insufficientStockItems;
 };
 module.exports = productController;
