@@ -57,7 +57,12 @@ cartController.getCart = async (req, res) => {
 cartController.getCartQty = async (req, res) => {
   try {
     const { userId } = req;
-    const cart = await Cart.findOne({ userId });
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      cart = new Cart({ userId });
+      await cart.save();
+    }
 
     res.status(200).json({
       status: "success",
