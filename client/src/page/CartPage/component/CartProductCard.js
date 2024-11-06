@@ -40,6 +40,7 @@ const CartProductCard = ({ item, currentModify, setCurrentModify }) => {
   };
 
   const handleModifyCancel = () => {
+    setQty(item.qty);
     setCurrentModify(!currentModify);
     setQtyModify(!qtyModify);
   };

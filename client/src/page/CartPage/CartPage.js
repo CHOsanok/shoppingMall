@@ -6,7 +6,6 @@ import CartProductCard from "./component/CartProductCard";
 import OrderReceipt from "../PaymentPage/component/OrderReceipt";
 import "./style/cart.style.css";
 import { getCartList } from "../../features/cart/cartSlice";
-import { ColorRing } from "react-loader-spinner";
 
 const CartPage = () => {
   const dispatch = useDispatch();
