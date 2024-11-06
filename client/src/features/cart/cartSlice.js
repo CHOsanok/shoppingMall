@@ -88,8 +88,6 @@ export const updateQty = createAsyncThunk(
   "cart/updateQty",
   async ({ id, value }, { rejectWithValue, dispatch }) => {
     try {
-      console.log(id, value, "dsfsdfdsfs");
-
       const response = await api.put(`/cart/${id}`, { value });
       dispatch(getCartList());
       dispatch(

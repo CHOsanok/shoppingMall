@@ -23,6 +23,7 @@ export const createOrder = createAsyncThunk(
         throw new Error(response.error);
       }
       dispatch(getCartQty());
+
       return response.data.orderNum;
     } catch (error) {
       return rejectWithValue(error.error);

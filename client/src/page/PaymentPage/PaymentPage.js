@@ -48,7 +48,7 @@ const PaymentPage = () => {
     dispatch(
       createOrder({
         totalPrice,
-        shipto: { address, city, zip },
+        shipTo: { address, city, zip },
         contact: { firstName, lastName, contact },
         orderList: cartList.map((item) => {
           return {

@@ -1,11 +1,26 @@
 import React from "react";
 import { Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router-dom";
+import { showToastMessage } from "../../../features/common/uiSlice";
 
-const OrderReceipt = ({ cartList, totalPrice }) => {
+const OrderReceipt = ({ cartList, totalPrice, currentModify }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handlePayment = () => {
+    if (currentModify) {
+      return dispatch(
+        showToastMessage({
+          message: `상품이 수정 중입니다.`,
+          status: "success",
+        })
+      );
+    }
+    navigate("/payment");
+  };
 
   return (
     <div className="receipt-container">
@@ -35,7 +50,7 @@ const OrderReceipt = ({ cartList, totalPrice }) => {
         <Button
           variant="dark"
           className="payment-button"
-          onClick={() => navigate("/payment")}
+          onClick={() => handlePayment()}
         >
           결제 계속하기
         </Button>
