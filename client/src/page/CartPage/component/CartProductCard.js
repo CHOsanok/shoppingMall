@@ -18,10 +18,12 @@ const CartProductCard = ({ item, currentModify, setCurrentModify }) => {
   }, [item]);
 
   const handleQtyChange = (value, maxQty) => {
+    console.log(item);
+
     if (value * 1 === maxQty + 1 || value * 1 > maxQty) {
       dispatch(
         showToastMessage({
-          message: `상품의 최대 주문 가능 수량인 ${maxQty}개를 초과하였습니다. 구매 가능 수량을 확인해주세요.`,
+          message: `${item.productId.name}상품의 최대 주문 가능 수량인 ${maxQty}개를 초과하였습니다. 구매 가능 수량을 확인해주세요.`,
           status: "success",
         })
       );
