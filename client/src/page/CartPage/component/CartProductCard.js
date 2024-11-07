@@ -57,6 +57,7 @@ const CartProductCard = ({ item, modifying, setModifying }) => {
       setQty(item.qty);
       setDeleteItem(!delteItem);
     } else {
+      setModifying(modifying.slice(0, -1));
       dispatch(deleteCartItem(item._id));
     }
   };
