@@ -8,10 +8,11 @@ import { getOrder } from "../../features/order/orderSlice";
 
 const MyPage = () => {
   const dispatch = useDispatch();
-  const { orderList } = useSelector((state) => state.order);
-  // console.log(orderList);
+  const { orderList, product } = useSelector((state) => state.order);
+  const id = useSelector((state) => state.user.user._id);
+
   useEffect(() => {
-    dispatch(getOrder());
+    dispatch(getOrder(id));
   }, [dispatch]);
 
   if (orderList?.length === 0) {
@@ -26,6 +27,7 @@ const MyPage = () => {
       {orderList.map((item) => (
         <OrderStatusCard
           orderItem={item}
+          productItem={product}
           className="status-card-container"
           key={item._id}
         />

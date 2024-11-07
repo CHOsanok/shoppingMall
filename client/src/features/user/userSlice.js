@@ -136,8 +136,8 @@ const userSlice = createSlice({
       })
       .addCase(loginWithGoogle.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
         state.loginError = null;
+        state.user = action.payload.user;
       })
       .addCase(loginWithGoogle.rejected, (state, action) => {
         state.loading = false;

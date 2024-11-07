@@ -26,6 +26,7 @@ export const createOrder = createAsyncThunk(
 
       return response.data.orderNum;
     } catch (error) {
+      dispatch(showToastMessage({ message: error.error, status: "error" }));
       return rejectWithValue(error.error);
     }
   }
@@ -33,7 +34,14 @@ export const createOrder = createAsyncThunk(
 
 export const getOrder = createAsyncThunk(
   "order/getOrder",
-  async (_, { rejectWithValue, dispatch }) => {}
+  async (id, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.get("/order", id);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
 );
 
 export const getOrderList = createAsyncThunk(
@@ -64,10 +72,21 @@ const orderSlice = createSlice({
       state.error = "";
       state.orderNum = action.payload;
     });
-    builder.addCase(createOrder.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    });
+    builder
+      .addCase(createOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getOrder.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = "";
+        state.orderList = action.payload.order;
+        state.product = action.payload.product;
+      })
+      .addCase(getOrder.rejected, (state, action) => {});
   },
 });
 
