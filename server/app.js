@@ -16,16 +16,18 @@ app.use((req, res, next) => {
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
   next();
 });
-
 app.use(
   cors({
     origin: function (origin, callback) {
-      // 모든 도메인 허용
-      callback(null, true);
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
     },
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true, // 자격 증명 포함 요청 허용
+    credentials: true,
   })
 );
 app.use(bodyParser.urlencoded({ extended: false }));
