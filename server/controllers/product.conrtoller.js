@@ -132,13 +132,6 @@ productController.checkStock = async (item) => {
     };
   }
 
-  const newStock = { ...product.stock };
-
-  newStock[item.size] -= item.qty;
-  product.stock = newStock;
-
-  await product.save();
-
   return { isVerify: true };
 };
 
@@ -156,5 +149,16 @@ productController.checkItemListStock = async (itemList) => {
   );
 
   return insufficientStockItems;
+};
+
+productController.completed = async (item) => {
+  const product = await Product.findById(item.productId);
+  const newStock = { ...product.stock };
+
+  newStock[item.size] -= item.qty;
+
+  product.stock = newStock;
+
+  await product.save();
 };
 module.exports = productController;
