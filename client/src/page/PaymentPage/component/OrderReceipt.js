@@ -1,17 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router-dom";
 import { showToastMessage } from "../../../features/common/uiSlice";
 
-const OrderReceipt = ({ cartList, totalPrice, currentModify }) => {
+const OrderReceipt = ({ cartList, totalPrice, modifying }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handlePayment = () => {
-    if (currentModify) {
+    if (modifying.length > 0) {
       return dispatch(
         showToastMessage({
           message: `상품이 수정 중입니다.`,
@@ -30,9 +30,14 @@ const OrderReceipt = ({ cartList, totalPrice, currentModify }) => {
           {cartList.length > 0 &&
             cartList.map((item, index) => (
               <div className="display-flex space-between" key={index}>
-                <div>{item.productId.name}</div>
                 <div>
-                  ₩ {(item.productId.price * item.qty).toLocaleString()}
+                  {item.productId.name} : {item.size.toUpperCase()}
+                </div>
+                <div>
+                  ₩{" "}
+                  {item.productId.stock[item.size] === 0
+                    ? 0
+                    : (item.productId.price * item.qty).toLocaleString()}
                 </div>
               </div>
             ))}

@@ -9,9 +9,11 @@ import { getCartList } from "../../features/cart/cartSlice";
 
 const CartPage = () => {
   const dispatch = useDispatch();
-  const { cartList, totalPrice, loading } = useSelector((state) => state.cart);
-  const [currentModify, setCurrentModify] = useState(false);
-
+  const { cartList, totalPrice } = useSelector((state) => state.cart);
+  const [modifying, setModifying] = useState([]);
+  useEffect(() => {
+    console.log(modifying);
+  }, [modifying]);
   useEffect(() => {
     dispatch(getCartList());
   }, []);
@@ -25,8 +27,8 @@ const CartPage = () => {
               <CartProductCard
                 item={item}
                 key={item._id}
-                currentModify={currentModify}
-                setCurrentModify={setCurrentModify}
+                modifying={modifying}
+                setModifying={setModifying}
               />
             ))
           ) : (
@@ -40,7 +42,7 @@ const CartPage = () => {
           <OrderReceipt
             cartList={cartList}
             totalPrice={totalPrice}
-            currentModify={currentModify}
+            modifying={modifying}
           />
         </Col>
       </Row>

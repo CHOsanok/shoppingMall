@@ -2,29 +2,29 @@ import React, { useEffect, useState } from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { updateQty, deleteCartItem } from "../../../features/cart/cartSlice";
 import { showToastMessage } from "../../../features/common/uiSlice";
+import { ModalBox } from "../../../common/component/ModalBox";
 
-const CartProductCard = ({ item, currentModify, setCurrentModify }) => {
+const CartProductCard = ({ item, modifying, setModifying }) => {
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.cart);
   const [qty, setQty] = useState(item.qty);
   const [qtyModify, setQtyModify] = useState(false);
   const [delteItem, setDeleteItem] = useState(false);
+  const stockStatus = item.qty > item.productId.stock[item.size];
 
-  useEffect(() => {
-    setQty(item.qty);
-  }, [item]);
+  const handleQtyChange = (value) => {
+    if (value === "0" || value === "") setDeleteItem(true);
 
-  const handleQtyChange = (value, maxQty) => {
-    console.log(item);
-
-    if (value * 1 === maxQty + 1 || value * 1 > maxQty) {
+    if (value > item.productId.stock[item.size]) {
+      setQty(item.productId.stock[item.size]);
       dispatch(
         showToastMessage({
-          message: `${item.productId.name}상품의 최대 주문 가능 수량인 ${maxQty}개를 초과하였습니다. 구매 가능 수량을 확인해주세요.`,
-          status: "success",
+          message: `'${item.productId.name}'상품의 최대 주문 가능 수량은 '${
+            item.productId.stock[item.size]
+          }'개입니다.`,
+          status: "error",
         })
       );
     } else {
@@ -32,28 +32,43 @@ const CartProductCard = ({ item, currentModify, setCurrentModify }) => {
     }
   };
 
-  const handleQtyModify = (id) => {
-    if (qtyModify) {
-      dispatch(updateQty({ id, value: qty }));
-      setCurrentModify(!currentModify);
+  const handleQtyModify = (id, value) => {
+    if (value === "상품 수정") {
+      setModifying([...modifying, "modifying"]);
+      setQtyModify(!qtyModify);
+    } else {
+      if (value === "완료") {
+        setQtyModify(!qtyModify);
+        setModifying(modifying.slice(0, -1));
+        if (qty * 1 !== item.qty && qty !== "0") {
+          dispatch(updateQty({ id, value: qty }));
+        }
+        if (qty === "0") deleteItem();
+      } else {
+        setQty(item.qty);
+        setQtyModify(!qtyModify);
+        setModifying(modifying.slice(0, -1));
+      }
     }
-    setCurrentModify(!currentModify);
-    setQtyModify(!qtyModify);
   };
 
-  const handleModifyCancel = () => {
-    setQty(item.qty);
-    setCurrentModify(!currentModify);
-    setQtyModify(!qtyModify);
-  };
-
-  const deleteCart = (id) => {
-    setDeleteItem(true);
-    dispatch(deleteCartItem(id));
+  const deleteItem = () => {
+    if (!delteItem) {
+      setQty(item.qty);
+      setDeleteItem(!delteItem);
+    } else {
+      dispatch(deleteCartItem(item._id));
+    }
   };
 
   return (
     <div className="product-card-cart ">
+      <ModalBox
+        show={delteItem}
+        setDeleteItem={setDeleteItem}
+        deleteItem={deleteItem}
+        content={`${item.productId.name} : ${item.size} 상품을 삭제 하시겠습니까?`}
+      />
       <Row>
         <Col md={2} xs={12}>
           <img src={item.productId.image} width={112} alt="product" />
@@ -61,24 +76,19 @@ const CartProductCard = ({ item, currentModify, setCurrentModify }) => {
         <Col md={10} xs={12}>
           <div className="display-flex space-between">
             <h3>{item.productId.name}</h3>
-            {delteItem ? (
-              <div>삭제중...</div>
-            ) : (
-              <button className="trash-button">
-                <FontAwesomeIcon
-                  disabled={loading}
-                  icon={faTrash}
-                  width={24}
-                  onClick={() => deleteCart(item._id)}
-                />
-              </button>
-            )}
+            <button className="trash-button">
+              <FontAwesomeIcon
+                icon={faTrash}
+                width={24}
+                onClick={() => deleteItem()}
+              />
+            </button>
           </div>
 
           <div>
             <strong>₩ {item.productId.price.toLocaleString()}</strong>
           </div>
-          <div>Size: {item.size}</div>
+          <div>Size: {item.size.toUpperCase()}</div>
           <div>
             Total: ₩ {(item.productId.price * item.qty).toLocaleString()}
           </div>
@@ -88,31 +98,27 @@ const CartProductCard = ({ item, currentModify, setCurrentModify }) => {
               <input
                 className="qty-dropdown"
                 value={qty}
-                onChange={(event) =>
-                  handleQtyChange(
-                    event.target.value,
-                    item.productId.stock[item.size]
-                  )
-                }
+                onChange={(event) => handleQtyChange(event.target.value)}
                 required
                 type="number"
                 placeholder="0"
                 max={item.productId.stock[item.size] + 1}
+                min={0}
               />
             ) : (
-              <div>{qty}</div>
+              <div>{stockStatus ? "상품의 재고가 부족합니다." : qty}</div>
             )}
             <button
-              onClick={() => {
-                handleQtyModify(item._id);
+              onClick={(event) => {
+                handleQtyModify(item._id, event.target.textContent);
               }}
             >
               {qtyModify ? "완료" : "상품 수정"}
             </button>
             {qtyModify && (
               <button
-                onClick={() => {
-                  handleModifyCancel();
+                onClick={(event) => {
+                  handleQtyModify(item._id, event.target.textContent);
                 }}
               >
                 취소

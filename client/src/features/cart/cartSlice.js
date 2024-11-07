@@ -18,9 +18,6 @@ export const addToCart = createAsyncThunk(
     try {
       const response = await api.post("/cart", { productId: id, size, qty: 1 });
 
-      if (response.status !== 200) {
-        throw new Error(response.error);
-      }
       dispatch(getCartQty());
       dispatch(
         showToastMessage({
@@ -47,10 +44,17 @@ export const getCartList = createAsyncThunk(
   async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await api.get("/cart");
+      response.data.product.items.map((item) => {
+        if (item.qty > item.productId.stock[item.size]) {
+          return dispatch(
+            showToastMessage({
+              message: `"${item.productId.name} : ${item.size}" 상품의 재고가 부족합니다.`,
+              status: "error",
+            })
+          );
+        }
+      });
 
-      if (response.status !== 200) {
-        throw new Error(response.error);
-      }
       return response.data.product;
     } catch (error) {
       return rejectWithValue(error.error);
@@ -76,7 +80,7 @@ export const deleteCartItem = createAsyncThunk(
       dispatch(
         showToastMessage({
           message: "페이지 오류 새로고침 해주세요.",
-          status: "fail",
+          status: "error",
         })
       );
       return rejectWithValue(error.error);
@@ -149,7 +153,10 @@ const cartSlice = createSlice({
         state.cartList = action.payload.items;
         state.cartItemCount = action.payload.items.length;
         state.totalPrice = action.payload.items.reduce(
-          (total, item) => total + item.productId.price * item.qty,
+          (total, item) =>
+            item.productId.stock[item.size] < item.qty
+              ? total + 0
+              : total + item.productId.price * item.qty,
           0
         );
       })
