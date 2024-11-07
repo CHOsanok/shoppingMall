@@ -15,7 +15,7 @@ const CartProductCard = ({ item, modifying, setModifying }) => {
   const stockStatus = item.qty > item.productId.stock[item.size];
 
   const handleQtyChange = (value) => {
-    if (value === "0" || value === "") setDeleteItem(true);
+    if (value * 1 === 0 || value === "") setDeleteItem(true);
 
     if (value > item.productId.stock[item.size]) {
       setQty(item.productId.stock[item.size]);
@@ -43,7 +43,7 @@ const CartProductCard = ({ item, modifying, setModifying }) => {
         if (qty * 1 !== item.qty && qty !== "0") {
           dispatch(updateQty({ id, value: qty }));
         }
-        if (qty === "0") deleteItem();
+        if (qty === 0) deleteItem();
       } else {
         setQty(item.qty);
         setQtyModify(!qtyModify);

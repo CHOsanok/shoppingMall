@@ -11,9 +11,7 @@ const CartPage = () => {
   const dispatch = useDispatch();
   const { cartList, totalPrice } = useSelector((state) => state.cart);
   const [modifying, setModifying] = useState([]);
-  useEffect(() => {
-    console.log(modifying);
-  }, [modifying]);
+
   useEffect(() => {
     dispatch(getCartList());
   }, []);
