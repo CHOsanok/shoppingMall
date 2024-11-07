@@ -110,10 +110,6 @@ export const getCartQty = createAsyncThunk(
     try {
       const response = await api.get("/cart/qty");
 
-      if (response.status !== 200) {
-        throw new Error(response.error);
-      }
-
       return response.data.cartItemCount;
     } catch (error) {
       return rejectWithValue(error.error);
