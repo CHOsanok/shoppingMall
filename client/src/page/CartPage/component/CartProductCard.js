@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -43,7 +43,7 @@ const CartProductCard = ({ item, modifying, setModifying }) => {
         if (qty * 1 !== item.qty && qty !== "0") {
           dispatch(updateQty({ id, value: qty }));
         }
-        if (qty === 0) deleteItem();
+        if (qty * 1 === 0) deleteItem();
       } else {
         setQty(item.qty);
         setQtyModify(!qtyModify);
