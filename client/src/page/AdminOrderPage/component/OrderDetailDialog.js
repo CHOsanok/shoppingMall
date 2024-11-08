@@ -4,22 +4,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { ORDER_STATUS } from "../../../constants/order.constants";
 import { updateOrder } from "../../../features/order/orderSlice";
 
-const OrderDetailDialog = ({ open, handleClose }) => {
+const OrderDetailDialog = ({ open, handleClose, searchQuery }) => {
+  const dispatch = useDispatch();
   const selectedOrder = useSelector((state) => state.order.selectedOrder);
   const [orderStatus, setOrderStatus] = useState(selectedOrder.status);
-  const dispatch = useDispatch();
 
   const handleStatusChange = (event) => {
     setOrderStatus(event.target.value);
   };
   const submitStatus = () => {
-    dispatch(updateOrder({ id: selectedOrder._id, status: orderStatus }));
+    dispatch(
+      updateOrder({ id: selectedOrder._id, status: orderStatus, searchQuery })
+    );
     handleClose();
   };
-
   if (!selectedOrder) {
     return <></>;
   }
+
   return (
     <Modal show={open} onHide={handleClose}>
       <Modal.Header closeButton>

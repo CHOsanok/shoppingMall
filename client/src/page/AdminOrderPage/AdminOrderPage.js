@@ -22,7 +22,6 @@ const AdminOrderPage = () => {
     orderNum: query.get("orderNum") || "",
   });
   const [open, setOpen] = useState(false);
-
   const tableHeader = [
     "#",
     "Order#",
@@ -101,7 +100,13 @@ const AdminOrderPage = () => {
         />
       </Container>
 
-      {open && <OrderDetailDialog open={open} handleClose={handleClose} />}
+      {open && (
+        <OrderDetailDialog
+          open={open}
+          handleClose={handleClose}
+          searchQuery={searchQuery}
+        />
+      )}
     </div>
   );
 };

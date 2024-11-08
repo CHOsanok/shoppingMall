@@ -60,7 +60,22 @@ export const getOrderList = createAsyncThunk(
 
 export const updateOrder = createAsyncThunk(
   "order/updateOrder",
-  async ({ id, status }, { dispatch, rejectWithValue }) => {}
+  async ({ id, status, searchQuery }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await api.put(`/order/${id}`, { status });
+
+      dispatch(getOrderList(searchQuery));
+      dispatch(
+        showToastMessage({
+          message: "주문정보 수정",
+          status: "success",
+        })
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.error);
+    }
+  }
 );
 
 // Order slice
@@ -111,9 +126,18 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(updateOrder.pending, (state, action) => {})
-      .addCase(updateOrder.fulfilled, (state, action) => {})
-      .addCase(updateOrder.rejected, (state, action) => {});
+      .addCase(updateOrder.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(updateOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = "";
+        state.success = true;
+      })
+      .addCase(updateOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
