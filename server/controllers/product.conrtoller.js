@@ -41,9 +41,9 @@ productController.getProducts = async (req, res) => {
     const cond = name ? { name: { $regex: name, $options: "i" } } : {};
     const response = { status: "success" };
     let query = Product.find(cond).sort({ createdAt: -1 });
-
     const PAGE_SIZE = 5;
     const LIMIT = 5;
+
     if (page) {
       query.skip((page - 1) * PAGE_SIZE).limit(LIMIT);
       const totalItemNum = await Product.find(cond).countDocuments();
@@ -52,6 +52,7 @@ productController.getProducts = async (req, res) => {
     }
     const productList = await query.exec();
     response.product = productList;
+
     res.status(200).json(response);
   } catch (error) {
     res.status(400).json({ status: "fail", error: error.message });
