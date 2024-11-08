@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Form, Modal, Button, Col, Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { ORDER_STATUS } from "../../../constants/order.constants";
-import { currencyFormat } from "../../../utils/number";
 import { updateOrder } from "../../../features/order/orderSlice";
 
 const OrderDetailDialog = ({ open, handleClose }) => {
@@ -57,14 +56,14 @@ const OrderDetailDialog = ({ open, handleClose }) => {
                   <tr key={item._id}>
                     <td>{item._id}</td>
                     <td>{item.productId.name}</td>
-                    <td>{currencyFormat(item.price)}</td>
+                    <td>{item.price.toLocaleString()}</td>
                     <td>{item.qty}</td>
-                    <td>{currencyFormat(item.price * item.qty)}</td>
+                    <td>{(item.price * item.qty).toLocaleString()}</td>
                   </tr>
                 ))}
               <tr>
                 <td colSpan={4}>총계:</td>
-                <td>{currencyFormat(selectedOrder.totalPrice)}</td>
+                <td>{selectedOrder.totalPrice.toLocaleString()}</td>
               </tr>
             </tbody>
           </Table>

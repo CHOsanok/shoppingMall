@@ -1,16 +1,17 @@
 import React from "react";
 import { Row, Col, Badge } from "react-bootstrap";
 import { badgeBg } from "../../../constants/order.constants";
-import { currencyFormat } from "../../../utils/number";
 
-const OrderStatusCard = ({ orderItem, productItem }) => {
-  console.log(productItem);
-
+const OrderStatusCard = ({ orderItem }) => {
   return (
     <div>
       <Row className="status-card">
         <Col xs={2}>
-          <img src={productItem?.image} alt="상품사진" height={96} />
+          <img
+            src={orderItem.items[0]?.productId?.image}
+            alt={orderItem.items[0]?.productId?.name}
+            height={96}
+          />
         </Col>
         <Col xs={8} className="order-info">
           <div>
@@ -23,7 +24,7 @@ const OrderStatusCard = ({ orderItem, productItem }) => {
             {orderItem.items[0].productId.name}
             {orderItem.items.length > 1 && `외 ${orderItem.items.length - 1}개`}
           </div>
-          <div>₩ {currencyFormat(orderItem.totalPrice)}</div>
+          <div>₩ {orderItem.totalPrice.toLocaleString()}</div>
         </Col>
         <Col md={2} className="vertical-middle">
           <div className="text-align-center text-12">주문상태</div>
