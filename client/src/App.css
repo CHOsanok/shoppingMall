@@ -1,4 +1,7 @@
 body {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
   font-family: sans-serif;
   background-color: #faf9f8;
 }
@@ -50,8 +53,7 @@ body {
 
 .search-box {
   border-bottom: 1px solid black;
-  /* position: absolute; */
-  padding: 5px;
+  padding: 10px;
 }
 .search-box input {
   border: none;
@@ -91,20 +93,37 @@ body {
   position: relative;
   margin-bottom: 10px;
   cursor: pointer;
+  background-color: #faf9f8;
+  border-radius: 1rem;
+  overflow: hidden;
 }
-
+.card:hover {
+  opacity: 0.8;
+  transition-duration: 0.5s;
+  box-shadow: rgb(163, 163, 163) 0 0 1.2rem;
+  z-index: 1;
+}
+.card:hover > img {
+  transform: scale(1.45);
+  transition-duration: 0.5s;
+}
 .soldOut {
-  opacity: 0.5;
-  justify-content: center;
-  align-items: center;
   pointer-events: none;
 }
+
+.soldOut > :not(p) {
+  opacity: 0.5;
+}
+
 .soldText {
-  font-size: 2rem;
+  font-size: 1.5rem;
+  margin-top: 1.2rem;
+  padding: 0 1rem;
+  border: solid rgb(178, 2, 2);
   position: absolute;
-  text-align: center;
-  align-items: center;
-  justify-items: center;
+  color: rgb(178, 2, 2);
+  transform: rotate(-40deg);
+  z-index: 9999;
 }
 
 .choice {
@@ -136,10 +155,6 @@ body {
   width: 100%;
 }
 
-.card:hover {
-  transform: scale(1.1);
-  z-index: 1;
-}
 .hide {
   visibility: hidden;
 }
@@ -191,14 +206,6 @@ body {
   min-height: 100vh !important;
   background-color: red;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-  /* box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1); */
-  /* box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px; */
-  /* width: 100vw; */
-  /* margin-left: -1rem;
-  -webkit-transition: margin .25s ease-out;
-  -moz-transition: margin .25s ease-out;
-  -o-transition: margin .25s ease-out;
-  transition: margin .25s ease-out; */
 }
 .sidebar-item {
   color: black;
@@ -251,7 +258,6 @@ body {
   .sidebar {
     max-width: 100%;
     padding: 0px;
-    /* margin-bottom: 0; */
   }
   .mobile-sidebar {
     max-height: 104px;
@@ -268,11 +274,4 @@ body {
 
 .landing-search-box input {
   background-color: #faf9f8;
-}
-
-.link-area {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-  margin-right: 20px;
 }
