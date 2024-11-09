@@ -34,7 +34,7 @@ export const createOrder = createAsyncThunk(
 
 export const getOrder = createAsyncThunk(
   "order/getOrder",
-  async (_, { rejectWithValue, dispatch }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const response = await api.get("/order/me");
 
@@ -47,7 +47,7 @@ export const getOrder = createAsyncThunk(
 
 export const getOrderList = createAsyncThunk(
   "order/getOrderList",
-  async (query, { rejectWithValue, dispatch }) => {
+  async (query, { rejectWithValue }) => {
     try {
       const response = await api.get("/order", { params: { ...query } });
 
@@ -72,6 +72,26 @@ export const updateOrder = createAsyncThunk(
         })
       );
       return response.data;
+    } catch (error) {
+      return rejectWithValue(error.error);
+    }
+  }
+);
+
+export const deleteOrder = createAsyncThunk(
+  "order/delete",
+  async ({ id }, { dispatch, rejectWithValue }) => {
+    try {
+      await api.delete(`/order${id}`);
+
+      dispatch(getOrderList());
+      dispatch(
+        showToastMessage({
+          message: "주문이 취소되었습니다.",
+          status: "success",
+        })
+      );
+      return;
     } catch (error) {
       return rejectWithValue(error.error);
     }

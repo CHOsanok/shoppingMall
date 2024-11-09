@@ -22,32 +22,29 @@ const LandingPage = () => {
   }, [query]);
 
   return (
-    <>
+    <Container>
       {loading ? (
         <Lodaing />
       ) : (
-        <Container>
-          <Row>
-            {productList?.length > 0 ? (
-              productList.map((item) => (
-                <Col md={3} sm={12} key={item._id}>
-                  <ProductCard item={item} />
-                  <div className="aaa"></div>
-                </Col>
-              ))
-            ) : (
-              <div className="text-align-center empty-bag">
-                {name === "" ? (
-                  <h2>등록된 상품이 없습니다!</h2>
-                ) : (
-                  <h2>{name}과 일치한 상품이 없습니다!`</h2>
-                )}
-              </div>
-            )}
-          </Row>
-        </Container>
+        <Row>
+          {productList?.length > 0 ? (
+            productList.map((item) => (
+              <Col md={3} sm={12} key={item._id}>
+                <ProductCard item={item} />
+              </Col>
+            ))
+          ) : (
+            <div className="text-align-center empty-bag">
+              {name === "" ? (
+                <h2>등록된 상품이 없습니다!</h2>
+              ) : (
+                <h2>{name}과 일치한 상품이 없습니다!`</h2>
+              )}
+            </div>
+          )}
+        </Row>
       )}
-    </>
+    </Container>
   );
 };
 

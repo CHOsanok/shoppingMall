@@ -28,19 +28,20 @@ const OrderReceipt = ({ cartList, totalPrice, modifying }) => {
       <ul className="receipt-list">
         <li>
           {cartList.length > 0 &&
-            cartList.map((item, index) => (
-              <div className="display-flex space-between" key={index}>
-                <div>
-                  {item.productId.name} : {item.size.toUpperCase()}
+            cartList.map((item, index) =>
+              item.productId.stock[item.size] === 0 ? (
+                ""
+              ) : (
+                <div className="display-flex space-between" key={index}>
+                  <div>
+                    {item.productId.name} : {item.size.toUpperCase()}
+                  </div>
+                  <div>
+                    ₩ {(item.productId.price * item.qty).toLocaleString()}
+                  </div>
                 </div>
-                <div>
-                  ₩{" "}
-                  {item.productId.stock[item.size] === 0
-                    ? 0
-                    : (item.productId.price * item.qty).toLocaleString()}
-                </div>
-              </div>
-            ))}
+              )
+            )}
         </li>
       </ul>
       <div className="display-flex space-between receipt-title">

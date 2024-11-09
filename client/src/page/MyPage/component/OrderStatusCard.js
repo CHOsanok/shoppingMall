@@ -1,8 +1,17 @@
 import React from "react";
-import { Row, Col, Badge } from "react-bootstrap";
+import { Row, Col, Badge, Button } from "react-bootstrap";
 import { badgeBg } from "../../../constants/order.constants";
+import { useDispatch } from "react-redux";
+import { deleteOrder } from "../../../features/order/orderSlice";
 
 const OrderStatusCard = ({ orderItem }) => {
+  const dispatch = useDispatch();
+  console.log(orderItem._id);
+
+  const handleDeleteOrder = () => {
+    dispatch(deleteOrder(orderItem));
+  };
+
   return (
     <div>
       <Row className="status-card">
@@ -25,6 +34,9 @@ const OrderStatusCard = ({ orderItem }) => {
             {orderItem.items.length > 1 && `외 ${orderItem.items.length - 1}개`}
           </div>
           <div>₩ {orderItem.totalPrice.toLocaleString()}</div>
+          <Button size="sm" onClick={() => handleDeleteOrder()}>
+            주문취소
+          </Button>
         </Col>
         <Col md={2} className="vertical-middle">
           <div className="text-align-center text-12">주문상태</div>

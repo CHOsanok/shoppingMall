@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch } from "react-redux";
 import { updateQty, deleteCartItem } from "../../../features/cart/cartSlice";
@@ -13,6 +13,13 @@ const CartProductCard = ({ item, modifying, setModifying }) => {
   const [qtyModify, setQtyModify] = useState(false);
   const [delteItem, setDeleteItem] = useState(false);
   const stockStatus = item.qty > item.productId.stock[item.size];
+
+  useEffect(() => {
+    if (stockStatus) {
+      setQtyModify(true);
+      setModifying([...modifying, "modifying"]);
+    }
+  }, [stockStatus]);
 
   const handleQtyChange = (value) => {
     if (value * 1 === 0 || value === "") setDeleteItem(true);
@@ -109,21 +116,23 @@ const CartProductCard = ({ item, modifying, setModifying }) => {
             ) : (
               <div>{stockStatus ? "상품의 재고가 부족합니다." : qty}</div>
             )}
-            <button
+            <Button
+              size="sm"
               onClick={(event) => {
                 handleQtyModify(item._id, event.target.textContent);
               }}
             >
               {qtyModify ? "완료" : "상품 수정"}
-            </button>
+            </Button>
             {qtyModify && (
-              <button
+              <Button
+                size="sm"
                 onClick={(event) => {
                   handleQtyModify(item._id, event.target.textContent);
                 }}
               >
                 취소
-              </button>
+              </Button>
             )}
           </div>
         </Col>
