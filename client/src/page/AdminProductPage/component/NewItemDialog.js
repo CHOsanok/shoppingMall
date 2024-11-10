@@ -91,7 +91,7 @@ const NewItemDialog = ({
         console.log(error);
       }
     } else {
-      // 상품 수정하기
+      await dispatch(checkImageUrl(formData.image)).unwrap();
       dispatch(
         editProduct({
           id: selectedProduct._id,

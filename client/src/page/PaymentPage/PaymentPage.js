@@ -10,7 +10,7 @@ import { createOrder } from "../../features/order/orderSlice";
 
 const PaymentPage = () => {
   const dispatch = useDispatch();
-  const { orderNum } = useSelector((state) => state.order);
+  const { orderNum, loading } = useSelector((state) => state.order);
   const { cartList, totalPrice } = useSelector((state) => state.cart);
   const [cardValue, setCardValue] = useState({
     cvc: "",
@@ -31,7 +31,6 @@ const PaymentPage = () => {
   });
 
   useEffect(() => {
-    // 오더번호를 받으면 어디로 갈까?
     if (firstLoading) {
       setFirstLoading(false);
     } else {
@@ -43,7 +42,6 @@ const PaymentPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // 오더 생성하기
     const { firstName, lastName, contact, address, city, zip } = shipInfo;
     dispatch(
       createOrder({
@@ -63,13 +61,11 @@ const PaymentPage = () => {
   };
 
   const handleFormChange = (event) => {
-    //shipInfo에 값 넣어주기
     const { name, value } = event.target;
     setShipInfo({ ...shipInfo, [name]: value });
   };
 
   const handlePaymentInfoChange = (event) => {
-    //카드정보 넣어주기
     const { name, value } = event.target;
     if (name === "expiry") {
       let newValue = cc_expires_format(value);
@@ -81,9 +77,7 @@ const PaymentPage = () => {
   const handleInputFocus = (e) => {
     setCardValue({ ...cardValue, focus: e.target.name });
   };
-  // if (cartList?.length === 0) {
-  //   navigate("/cart");
-  // }// 주문할 아이템이 없다면 주문하기로 안넘어가게 막음
+
   return (
     <Container>
       <Row>
@@ -169,6 +163,7 @@ const PaymentPage = () => {
                   variant="dark"
                   className="payment-button pay-button"
                   type="submit"
+                  disabled={loading}
                 >
                   결제하기
                 </Button>

@@ -17,9 +17,12 @@ const Navbar = ({ user }) => {
   const { cartItemCount, loading } = useSelector((state) => state.cart);
   const isMobile = window.navigator.userAgent.indexOf("Mobile") !== -1;
   const [showSearchBox, setShowSearchBox] = useState(false);
-
   const [width, setWidth] = useState(0);
   const navigate = useNavigate();
+  const pathName = window.location.pathname;
+  const loginSearchBoxHide =
+    pathName === "/login" || pathName === "/register" ? true : false;
+
   const onCheckEnter = (event) => {
     if (event.key === "Enter") {
       if (event.target.value === "") {
@@ -107,8 +110,13 @@ const Navbar = ({ user }) => {
           </div>
         </div>
       </div>
+      <div className="nav-logo">
+        <Link to="/" className="logo-link">
+          <img width={100} src="/image/hm-logo.png" alt="hm-logo.png" />
+        </Link>
+      </div>
       <div className="nav-menu-area">
-        {!isMobile && ( // admin페이지에서 같은 search-box스타일을 쓰고있음 그래서 여기서 서치박스 안보이는것 처리를 해줌
+        {!isMobile && !loginSearchBoxHide && (
           <div className="search-box landing-search-box ">
             <FontAwesomeIcon icon={faSearch} />
             <input

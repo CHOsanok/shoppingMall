@@ -3,7 +3,6 @@ import { getCartQty } from "../cart/cartSlice";
 import api from "../../utils/api";
 import { showToastMessage } from "../common/uiSlice";
 
-// Define initial state
 const initialState = {
   orderList: [],
   orderNum: "",
@@ -13,7 +12,6 @@ const initialState = {
   totalPageNum: 1,
 };
 
-// Async thunks
 export const createOrder = createAsyncThunk(
   "order/createOrder",
   async (payload, { dispatch, rejectWithValue }) => {
@@ -80,25 +78,22 @@ export const updateOrder = createAsyncThunk(
 
 export const deleteOrder = createAsyncThunk(
   "order/delete",
-  async ({ id }, { dispatch, rejectWithValue }) => {
+  async ({ _id, items }, { dispatch, rejectWithValue }) => {
     try {
-      await api.delete(`/order${id}`);
-
-      dispatch(getOrderList());
+      await api.delete(`/order/${_id}`, { data: { deleteOrder: items } });
+      dispatch(getOrder());
       dispatch(
         showToastMessage({
           message: "주문이 취소되었습니다.",
           status: "success",
         })
       );
-      return;
     } catch (error) {
       return rejectWithValue(error.error);
     }
   }
 );
 
-// Order slice
 const orderSlice = createSlice({
   name: "order",
   initialState,

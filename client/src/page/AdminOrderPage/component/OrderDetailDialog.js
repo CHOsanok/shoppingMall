@@ -19,7 +19,7 @@ const OrderDetailDialog = ({ open, handleClose, searchQuery }) => {
     handleClose();
   };
   if (!selectedOrder) {
-    return <></>;
+    return;
   }
 
   return (

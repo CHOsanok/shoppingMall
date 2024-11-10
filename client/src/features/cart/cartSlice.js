@@ -11,7 +11,6 @@ const initialState = {
   totalPrice: 0,
 };
 
-// Async thunk actions
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
   async ({ id, size }, { rejectWithValue, dispatch }) => {
@@ -136,8 +135,8 @@ const cartSlice = createSlice({
     initialCart: (state) => {
       state.cartItemCount = 0;
     },
-    // You can still add reducers here for non-async actions if necessary
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(addToCart.pending, (state, action) => {

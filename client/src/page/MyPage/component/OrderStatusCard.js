@@ -1,14 +1,23 @@
 import React from "react";
 import { Row, Col, Badge, Button } from "react-bootstrap";
 import { badgeBg } from "../../../constants/order.constants";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteOrder } from "../../../features/order/orderSlice";
+import { showToastMessage } from "../../../features/common/uiSlice";
 
 const OrderStatusCard = ({ orderItem }) => {
+  const { loading } = useSelector((state) => state.order);
   const dispatch = useDispatch();
-  console.log(orderItem._id);
 
   const handleDeleteOrder = () => {
+    if (orderItem.status === "shipping") {
+      return dispatch(
+        showToastMessage({
+          message: "배송 중인 상품은 취소할 수 없습니다.",
+          status: "error",
+        })
+      );
+    }
     dispatch(deleteOrder(orderItem));
   };
 
@@ -34,7 +43,11 @@ const OrderStatusCard = ({ orderItem }) => {
             {orderItem.items.length > 1 && `외 ${orderItem.items.length - 1}개`}
           </div>
           <div>₩ {orderItem.totalPrice.toLocaleString()}</div>
-          <Button size="sm" onClick={() => handleDeleteOrder()}>
+          <Button
+            disabled={loading}
+            size="sm"
+            onClick={() => handleDeleteOrder()}
+          >
             주문취소
           </Button>
         </Col>
