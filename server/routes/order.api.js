@@ -12,5 +12,11 @@ router.put(
   authController.checkAdminPermission,
   orderController.updateOrder
 );
+router.delete(
+  "/:id",
+  authController.authenticate,
+  authController.checkAdminPermission,
+  orderController.deleteOrder
+);
 
 module.exports = router;

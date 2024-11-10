@@ -3,6 +3,27 @@ const Order = require("../model/Order");
 const randomStringGenerator = require("../utils/randomStringGenerator");
 const productController = require("./product.conrtoller");
 
+orderController.deleteOrder = async (req, res) => {
+  try {
+    const { deleteOrder } = req.body;
+    const { id } = req.params;
+
+    if (!id) {
+      throw new Error("주문정보 오류");
+    }
+
+    for (const item of deleteOrder) {
+      await productController.cancelItem(item);
+    }
+
+    const cancelOrder = await Order.deleteOne({ _id: id });
+
+    res.status(200).json({ status: "success", cancelOrder });
+  } catch (error) {
+    res.status(400).json({ status: "fail", error: error.message });
+  }
+};
+
 orderController.createOrder = async (req, res) => {
   try {
     const { userId } = req;
@@ -19,9 +40,10 @@ orderController.createOrder = async (req, res) => {
       );
       throw new Error(errorMessage);
     }
-    await Promise.all(
-      orderList.map((item) => productController.completed(item))
-    );
+
+    for (const item of orderList) {
+      await productController.completedOrder(item);
+    }
 
     const newOrder = new Order({
       userId,
@@ -64,9 +86,8 @@ orderController.getOrderList = async (req, res) => {
       ? { orderNum: { $regex: orderNum, $options: "i" } }
       : {};
     const response = { status: "success" };
-    const PAGE_SIZE = 3;
-    const LIMIT = 3;
-    console.log(cond);
+    const PAGE_SIZE = 5;
+    const LIMIT = 5;
 
     let query = Order.find(cond)
       .populate("userId")
@@ -101,7 +122,7 @@ orderController.updateOrder = async (req, res) => {
     const { status } = req.body;
     const order = await Order.findByIdAndUpdate(id, { status }, { new: true });
     if (!order) {
-      throw new Error("오더 정보가 없습니다.");
+      throw new Error("주문 정보가 없습니다.");
     }
 
     res.status(200).json({ status: "success", data: order });

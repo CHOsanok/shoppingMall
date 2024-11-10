@@ -138,6 +138,7 @@ productController.checkStock = async (item) => {
 
 productController.checkItemListStock = async (itemList) => {
   const insufficientStockItems = [];
+
   await Promise.all(
     itemList.map(async (item) => {
       const stockCheck = await productController.checkStock(item);
@@ -148,18 +149,28 @@ productController.checkItemListStock = async (itemList) => {
       return stockCheck;
     })
   );
-
   return insufficientStockItems;
 };
 
-productController.completed = async (item) => {
+productController.completedOrder = async (item) => {
   const product = await Product.findById(item.productId);
+
   const newStock = { ...product.stock };
 
   newStock[item.size] -= item.qty;
-
   product.stock = newStock;
 
   await product.save();
 };
+
+productController.cancelItem = async (item) => {
+  const product = await Product.findById(item.productId);
+  const newStock = { ...product.stock };
+
+  newStock[item.size] += item.qty;
+  product.stock = newStock;
+
+  await product.save();
+};
+
 module.exports = productController;
